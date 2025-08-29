@@ -19,7 +19,7 @@ import {
   ChevronRight,
   Sparkles,
 } from "lucide-react";
-
+import { useNavigate } from 'react-router-dom';
 type AssetType = "cars" | "properties" | "laptops";
 
 export function HeroSection() {
@@ -28,6 +28,7 @@ export function HeroSection() {
   const [selectedAsset, setSelectedAsset] = useState<AssetType | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const navigate = useNavigate();
 
   const assetData = [
     {
@@ -92,6 +93,12 @@ export function HeroSection() {
       setIsAnimating(false);
     }, 300);
   };
+
+  function manageAssets(): void {
+    if (selectedAsset) {
+      navigate(`/${selectedAsset}`);
+    }
+  }
 
   return (
     <section
@@ -360,7 +367,8 @@ export function HeroSection() {
               </div>
 
               <Button
-                onClick={() => setIsSignupModalOpen(true)}
+                onClick={manageAssets}
+                disabled={!selectedAsset}
                 className="btn-neon text-neon-cyan border-neon-cyan text-xl px-16 py-8 group"
               >
                 Start Managing Your Assets
