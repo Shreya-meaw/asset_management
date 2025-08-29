@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const DUMMY_EMAIL = "admin@test.com";
+const DUMMY_PASSWORD = "Password@123";
 
 export function Navbar() {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  // New state variables for showing forms
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showGetStartedForm, setShowGetStartedForm] = useState(false);
+
+  // Auth state
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    localStorage.getItem("isloggedin") === "true"
+  );
+
+  // Login form state
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
+  const navigate = useNavigate();
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
@@ -23,7 +38,6 @@ export function Navbar() {
     }
   };
 
-  // Handlers to toggle forms
   const handleLoginClick = () => {
     setShowLoginForm(true);
     setShowGetStartedForm(false);
@@ -34,11 +48,47 @@ export function Navbar() {
     setShowLoginForm(false);
   };
 
-  // Handler to close forms (optional)
   const closeForms = () => {
     setShowLoginForm(false);
     setShowGetStartedForm(false);
+    setLoginError("");
+    setLoginEmail("");
+    setLoginPassword("");
   };
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      loginEmail === DUMMY_EMAIL &&
+      loginPassword === DUMMY_PASSWORD
+    ) {
+      setIsAuthenticated(true);
+      localStorage.setItem("isloggedin", "true");
+      closeForms();
+      navigate("/cars");
+    } else {
+      setLoginError("Invalid email or password.");
+    }
+  };
+
+  // Check authentication on route change
+  useEffect(() => {
+    const dashboardRoutes = ["/cars", "/laptops", "/properties"];
+    const handleRouteCheck = () => {
+      const isLoggedIn = localStorage.getItem("isloggedin") === "true";
+      if (dashboardRoutes.includes(window.location.pathname) && !isLoggedIn) {
+        navigate("/");
+      }
+      setIsAuthenticated(isLoggedIn);
+    };
+
+    window.addEventListener("popstate", handleRouteCheck);
+    handleRouteCheck();
+
+    return () => {
+      window.removeEventListener("popstate", handleRouteCheck);
+    };
+  }, [navigate]);
 
   return (
     <>
@@ -97,19 +147,19 @@ export function Navbar() {
               </Button>
 
               {/* CTA Buttons */}
-              <Button
-                variant="outline"
-                className="text-foreground border-border hover:bg-accent hover:text-accent-foreground font-body font-medium transition-all duration-300"
-                onClick={handleLoginClick}
-              >
-                Login
-              </Button>
-              <Button
-                className="btn-neon text-neon-cyan border-neon-cyan font-body font-semibold"
-                onClick={handleGetStartedClick}
-              >
-                Get Started
-              </Button>
+                  <Button
+                    variant="outline"
+                    className="text-foreground border-border hover:bg-accent hover:text-accent-foreground font-body font-medium transition-all duration-300"
+                    onClick={handleLoginClick}
+                  >
+                    Login
+                  </Button>
+                  <Button
+                    className="btn-neon text-neon-cyan border-neon-cyan font-body font-semibold"
+                    onClick={handleGetStartedClick}
+                  >
+                    Get Started
+                  </Button>          
             </div>
 
             {/* Mobile menu button */}
@@ -202,7 +252,7 @@ export function Navbar() {
               &times;
             </button>
             <h2 className="text-2xl font-semibold mb-4">Login</h2>
-            <form>
+            <form onSubmit={handleLoginSubmit}>
               <label className="block mb-2 font-medium" htmlFor="login-username">
                 Username or Email
               </label>
@@ -211,6 +261,8 @@ export function Navbar() {
                 type="text"
                 className="w-full mb-4 p-2 border border-border rounded"
                 required
+                value={loginEmail}
+                onChange={e => setLoginEmail(e.target.value)}
               />
               <label className="block mb-2 font-medium" htmlFor="login-password">
                 Password
@@ -220,8 +272,16 @@ export function Navbar() {
                 type="password"
                 className="w-full mb-4 p-2 border border-border rounded"
                 required
+                value={loginPassword}
+                onChange={e => setLoginPassword(e.target.value)}
               />
-              <Button type="submit" className="w-full btn-neon text-neon-cyan border-neon-cyan font-semibold">
+              {loginError && (
+                <div className="text-red-500 mb-2">{loginError}</div>
+              )}
+              <Button
+                type="submit"
+                className="w-full btn-neon text-neon-cyan border-neon-cyan font-semibold"
+              >
                 Login
               </Button>
             </form>
