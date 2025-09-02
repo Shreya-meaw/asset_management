@@ -20,6 +20,7 @@ export function CarsDashboard() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [addSuccess, setAddSuccess] = useState(false);
 
   useEffect(() => {
     async function getCars() {
@@ -36,16 +37,17 @@ export function CarsDashboard() {
     getCars();
   }, []);
 
-  const handleAddCar = async (data: any) => {debugger;
+  const handleAddCar = async (data: any) => {
     try {
       const newCar = await addCar(data);
       setCarData((prev) => [...prev, newCar]);
+      setAddSuccess(true);
+      setTimeout(() => setAddSuccess(false), 3000); // Hide after 3 seconds
     } catch (err) {
       console.error("Error adding car:", err);
-      // Optionally show an error message to the user
     }
   };
-  const normalize = (str: string) => str.toLowerCase();
+  const normalize = (str: any) => (typeof str === "string" ? str.toLowerCase() : "");
 
   const filteredCars = React.useMemo(() => {
     if (!searchQuery.trim()) return carData;
@@ -60,10 +62,9 @@ export function CarsDashboard() {
     );
     const otherMatches = carData.filter(
       (car) =>
-        !normalize(car.id).includes(q) &&
+        normalize(car.modelNo).includes(q) ||
         (normalize(car.name).includes(q) ||
-          normalize(car.status).includes(q) ||
-          normalize(car.location).includes(q))
+        normalize(car.location).includes(q))
     );
 
     const combined = [...idPrefixMatches, ...idContainsMatches, ...otherMatches];
@@ -72,7 +73,7 @@ export function CarsDashboard() {
     );
   }, [searchQuery, carData]);
 
-  const getStatusColor = (status: number) => {debugger;
+  const getStatusColor = (status: number) => {
     switch (status) {
       case 2:
         return "text-neon-green";
@@ -113,6 +114,11 @@ export function CarsDashboard() {
 
   return (
     <div className="space-y-6 px-2 sm:px-4 lg:px-6 py-2 sm:py-4 lg:py-6">
+      {addSuccess && (
+        <div className="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-50">
+          Vehicle added successfully!
+        </div>
+      )}
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="card-glow">
