@@ -13,7 +13,7 @@ import {
   Search,
 } from "lucide-react";
 import { AddAssetModal } from "../AddAssetModal";
-import { fetchCars } from "@/services/assetsService";
+import { fetchCars, addCar } from "@/services/assetsService";
 
 export function CarsDashboard() {
   const [carData, setCarData] = useState([]);
@@ -36,9 +36,14 @@ export function CarsDashboard() {
     getCars();
   }, []);
 
-  const handleAddCar = (data: any) => {
-    // Add car logic here
-    console.log("New car:", data);
+  const handleAddCar = async (data: any) => {debugger;
+    try {
+      const newCar = await addCar(data);
+      setCarData((prev) => [...prev, newCar]);
+    } catch (err) {
+      console.error("Error adding car:", err);
+      // Optionally show an error message to the user
+    }
   };
   const normalize = (str: string) => str.toLowerCase();
 
