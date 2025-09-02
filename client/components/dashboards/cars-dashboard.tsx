@@ -64,7 +64,7 @@ export function CarsDashboard() {
       (car) =>
         normalize(car.modelNo).includes(q) ||
         (normalize(car.name).includes(q) ||
-        normalize(car.location).includes(q))
+          normalize(car.location).includes(q))
     );
 
     const combined = [...idPrefixMatches, ...idContainsMatches, ...otherMatches];
@@ -104,9 +104,9 @@ export function CarsDashboard() {
       case 2:
         return "Active";
       case 1:
-        return  "Maintenance";
+        return "Maintenance";
       case 0:
-        return  "Inactive";
+        return "Inactive";
       default:
         return "Inactive";
     }
@@ -126,7 +126,7 @@ export function CarsDashboard() {
             <div className="flex items-center space-x-2">
               <Car className="w-5 h-5 text-neon-cyan" />
               <div>
-                <p className="text-2xl font-heading font-bold text-neon-cyan">125</p>
+                <p className="text-2xl font-heading font-bold text-neon-cyan">{carData.length}</p>
                 <p className="text-xs text-muted-foreground">Total Vehicles</p>
               </div>
             </div>
@@ -138,7 +138,7 @@ export function CarsDashboard() {
             <div className="flex items-center space-x-2">
               <CheckCircle className="w-5 h-5 text-neon-green" />
               <div>
-                <p className="text-2xl font-heading font-bold text-neon-green">98</p>
+                <p className="text-2xl font-heading font-bold text-neon-green">{carData.filter(car => car.status === 2).length}</p>
                 <p className="text-xs text-muted-foreground">Active</p>
               </div>
             </div>
@@ -150,7 +150,7 @@ export function CarsDashboard() {
             <div className="flex items-center space-x-2">
               <AlertTriangle className="w-5 h-5 text-neon-orange" />
               <div>
-                <p className="text-2xl font-heading font-bold text-neon-orange">12</p>
+                <p className="text-2xl font-heading font-bold text-neon-orange">{carData.filter(car => car.status === 1).length}</p>
                 <p className="text-xs text-muted-foreground">Maintenance</p>
               </div>
             </div>
@@ -160,10 +160,12 @@ export function CarsDashboard() {
         <Card className="card-glow">
           <CardContent className="p-4">
             <div className="flex items-center space-x-2">
-              <DollarSign className="w-5 h-5 text-neon-purple" />
+              <Clock className="w-5 h-5 text-muted-foreground" />
               <div>
-                <p className="text-2xl font-heading font-bold text-neon-purple">$48K</p>
-                <p className="text-xs text-muted-foreground">Monthly Cost</p>
+                <p className="text-2xl font-heading font-bold text-muted-foreground">
+                  {carData.filter(car => car.status === 0).length}
+                </p>
+                <p className="text-xs text-muted-foreground">Inactive</p>
               </div>
             </div>
           </CardContent>
@@ -268,11 +270,11 @@ export function CarsDashboard() {
         </Card>
 
         <AddAssetModal
-        open={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        assetType="car"
-        onAdd={handleAddCar}
-      />
+          open={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          assetType="car"
+          onAdd={handleAddCar}
+        />
 
         <Card className="card-hover-enhance cursor-pointer group">
           <CardContent className="p-6 text-center relative overflow-hidden">
