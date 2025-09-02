@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Dispatch, SetStateAction } from "react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Moon, Sun, Menu, X } from "lucide-react";
@@ -7,11 +7,15 @@ import { useNavigate } from "react-router-dom";
 const DUMMY_EMAIL = "admin@test.com";
 const DUMMY_PASSWORD = "Password@123";
 
-export function Navbar() {
+interface NavbarProps {
+  showLoginForm: boolean;
+  setShowLoginForm: Dispatch<SetStateAction<boolean>>;
+}
+
+export function Navbar({ showLoginForm, setShowLoginForm }: NavbarProps) {
   const { theme, setTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const [showLoginForm, setShowLoginForm] = useState(false);
   const [showGetStartedForm, setShowGetStartedForm] = useState(false);
 
   // Auth state
@@ -40,18 +44,12 @@ export function Navbar() {
 
   const handleLoginClick = () => {
     setShowLoginForm(true);
-    setShowGetStartedForm(false);
   };
 
   const handleLogoutClick = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("isloggedin");
     navigate("/");
-  };
-
-  const handleGetStartedClick = () => {
-    setShowGetStartedForm(true);
-    setShowLoginForm(false);
   };
 
   const closeForms = () => {

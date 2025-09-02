@@ -25,6 +25,7 @@ import {
 
 export default function Index() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
+  const [showLoginForm, setShowLoginForm] = useState(false);
 
   const testimonials = [
     {
@@ -134,9 +135,9 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
-      <Navbar />
+      <Navbar showLoginForm={showLoginForm} setShowLoginForm={setShowLoginForm} />
 
-      <HeroSection />
+      <HeroSection onLoginClick={() => setShowLoginForm(true)} />
 
       {/* Core Features Section */}
       <section id="features" className="py-32 px-4 sm:px-6 lg:px-8 relative">

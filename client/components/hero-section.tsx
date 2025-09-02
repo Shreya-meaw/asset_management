@@ -1,29 +1,20 @@
-
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Car,
   Home,
   Laptop,
-  Play,
-  ArrowRight,
   ChevronRight,
   Sparkles,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 type AssetType = "cars" | "properties" | "laptops";
+type HeroSectionProps = {
+  onLoginClick?: () => void;
+};
 
-export function HeroSection() {
+export function HeroSection({ onLoginClick }: HeroSectionProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const navigate = useNavigate();
@@ -73,13 +64,6 @@ export function HeroSection() {
     setIsAnimating(false);
   };
 
-  const handleBackToHero = () => {
-    setIsAnimating(true);
-    setTimeout(() => {
-      setIsAnimating(false);
-    }, 300);
-  };
-
   // Add this line (replace with your actual login logic)
   const isLoggedIn = localStorage.getItem("isloggedin") === "true";
   return (
@@ -95,130 +79,102 @@ export function HeroSection() {
         className={`relative z-10 max-w-7xl mx-auto transition-all duration-700 ease-in-out ${isAnimating ? "opacity-0 scale-95" : "opacity-100 scale-100"
           }`}
       >
-         
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Enhanced Left Content */}
-            <div className="text-center lg:text-left space-y-8">
-              <div className="space-y-6">
-                <div className="relative">
-                  <h1 className="text-5xl sm:text-6xl lg:text-7xl font-heading font-bold leading-tight">
-                    <span className="text-neon-purple text-neon relative">
-                      All Your Assets.
-                      <Sparkles className="absolute -top-4 -right-4 w-8 h-8 text-neon-cyan animate-pulse" />
-                    </span>
-                    <br />
-                    <span className="bg-gradient-to-r from-white via-neon-cyan to-white bg-clip-text text-transparent">
-                      One Dashboard.
-                    </span>
-                  </h1>
-                </div>
 
-                <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl font-body leading-relaxed">
-                  Manage Cars, Properties & Laptops with secure, scalable asset
-                  tracking.
-                </p>
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+          {/* Enhanced Left Content */}
+          <div className="text-center lg:text-left space-y-8">
+            <div className="space-y-6">
+              <div className="relative">
+                <h1 className="text-5xl sm:text-6xl lg:text-7xl font-heading font-bold leading-tight">
+                  <span className="text-neon-purple text-neon relative">
+                    All Your Assets.
+                    <Sparkles className="absolute -top-4 -right-4 w-8 h-8 text-neon-cyan animate-pulse" />
+                  </span>
+                  <br />
+                  <span className="bg-gradient-to-r from-white via-neon-cyan to-white bg-clip-text text-transparent">
+                    One Dashboard.
+                  </span>
+                </h1>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
-                {/* <Dialog
-                  open={isSignupModalOpen}
-                  onOpenChange={setIsSignupModalOpen}
-                >
-                  <DialogTrigger asChild>
-                    <Button className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-lg px-10 py-6 w-full sm:w-auto group">
-                      Get Started Free
-                      <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md bg-card border-border/40 shadow-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-2xl font-heading text-center">
-                        Start Your Free Trial
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-6 py-4">
-                      
-                </Dialog> */}
-
-                {/* <Button
-                  onClick={() => handleAssetClick("cars")}
-                  variant="outline"
-                  className="btn-neon text-neon-purple border-neon-purple hover:bg-neon-purple/10 text-lg px-10 py-6 w-full sm:w-auto group"
-                >
-                  <Play className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" />
-                  Try Live Demo
-                </Button> */}
-              </div>
+              <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl font-body leading-relaxed">
+                Manage Cars, Properties & Laptops with secure, scalable asset
+                tracking.
+              </p>
             </div>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center lg:justify-start">
+            </div>
+          </div>
+          {/* Enhanced Asset Preview Cards */}
+          <div className="relative order-first lg:order-last">
+            <div className="card-glow p-8 relative overflow-hidden">
+              {/* Background decoration */}
+              {/* <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-neon-cyan/10 to-transparent rounded-full blur-xl"></div> */}
 
-            {/* Enhanced Asset Preview Cards */}
-            <div className="relative order-first lg:order-last">
-              <div className="card-glow p-8 relative overflow-hidden">
-                {/* Background decoration */}
-                {/* <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-neon-cyan/10 to-transparent rounded-full blur-xl"></div> */}
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <h3 className="text-xl font-heading font-semibold text-center mb-2 text-neon-cyan">
+                  Interactive Asset Dashboards
+                </h3>
 
-                <div className="relative z-10 flex flex-col items-center gap-4">
-                  <h3 className="text-xl font-heading font-semibold text-center mb-2 text-neon-cyan">
-                    Interactive Asset Dashboards
-                  </h3>
+                {/* Show login button only if not logged in */}
+                {!isLoggedIn && (
+                  <Button
+                    className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-lg px-10 py-6 w-full sm:w-auto group"
+                    onClick={onLoginClick}
+                  >
+                    Please login to manage your assets
+                    <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                  </Button>
+                )}
 
-                  {/* Show login button only if not logged in */}
-                  {!isLoggedIn && (
-                    <Button className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-lg px-10 py-6 w-full sm:w-auto group">
-                      Please login to manage your assets
-                      <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Button>
-                  )}
+                {isLoggedIn && (<p className="text-center text-muted-foreground mb-8 text-sm">
+                  Click any card to explore real-time management tools
+                </p>)}
 
-                  <p className="text-center text-muted-foreground mb-8 text-sm">
-                    Click any card to explore real-time management tools
-                  </p>
-
-                  {/* Show asset cards only if logged in */}
-                  {isLoggedIn && (
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
-                      {assetData.map((asset, index) => {
-                        const IconComponent = asset.icon;
-                        return (
-                          <div
-                            key={asset.id}
-                            className={`group relative overflow-hidden rounded-xl p-4 md:p-6 cursor-pointer transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 active:scale-95 ${asset.borderColor} border-2 bg-gradient-to-br ${asset.bgGradient} backdrop-blur-sm`}
-                            onClick={() => handleAssetClick(asset.id)}
-                            style={{
-                              animationDelay: `${index * 100}ms`,
-                              animation: "slideInUp 0.6s ease-out forwards",
-                            }}
-                          >
-                            <div className="relative z-10 text-center space-y-4">
-                              <div
-                                className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${asset.bgGradient} border ${asset.borderColor} flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}
-                              >
-                                <IconComponent
-                                  className={`w-8 h-8 ${asset.iconColor} group-hover:drop-shadow-lg transition-all duration-300`}
-                                />
-                              </div>
-                              <h4
-                                className={`text-lg font-heading font-bold ${asset.iconColor} group-hover:text-shadow-glow transition-all duration-300`}
-                              >
-                                {asset.name}
-                              </h4>
-                              <p className="text-xs text-muted-foreground font-body mt-1">
-                                {asset.description}
-                              </p>
-                              <p className={`text-sm font-semibold ${asset.iconColor}`}>
-                                {asset.count}
-                              </p>
+                {/* Show asset cards only if logged in */}
+                {isLoggedIn && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
+                    {assetData.map((asset, index) => {
+                      const IconComponent = asset.icon;
+                      return (
+                        <div
+                          key={asset.id}
+                          className={`group relative overflow-hidden rounded-xl p-4 md:p-6 cursor-pointer transition-all duration-500 transform hover:scale-105 hover:-translate-y-2 active:scale-95 ${asset.borderColor} border-2 bg-gradient-to-br ${asset.bgGradient} backdrop-blur-sm`}
+                          onClick={() => handleAssetClick(asset.id)}
+                          style={{
+                            animationDelay: `${index * 100}ms`,
+                            animation: "slideInUp 0.6s ease-out forwards",
+                          }}
+                        >
+                          <div className="relative z-10 text-center space-y-4">
+                            <div
+                              className={`w-16 h-16 mx-auto rounded-full bg-gradient-to-br ${asset.bgGradient} border ${asset.borderColor} flex items-center justify-center group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}
+                            >
+                              <IconComponent
+                                className={`w-8 h-8 ${asset.iconColor} group-hover:drop-shadow-lg transition-all duration-300`}
+                              />
                             </div>
+                            <h4
+                              className={`text-lg font-heading font-bold ${asset.iconColor} group-hover:text-shadow-glow transition-all duration-300`}
+                            >
+                              {asset.name}
+                            </h4>
+                            <p className="text-xs text-muted-foreground font-body mt-1">
+                              {asset.description}
+                            </p>
+                            <p className={`text-sm font-semibold ${asset.iconColor}`}>
+                              {asset.count}
+                            </p>
                           </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        
+        </div>
       </div>
 
       {/* Loading Overlay */}
@@ -229,7 +185,7 @@ export function HeroSection() {
               <div className="w-full h-full border-4 border-neon-cyan/30 border-t-neon-cyan rounded-full animate-spin"></div>
             </div>
             <p className="text-neon-cyan font-heading font-semibold">
-              Loading {selectedAsset} dashboard...
+              Loading dashboard...
             </p>
           </div>
         </div>
