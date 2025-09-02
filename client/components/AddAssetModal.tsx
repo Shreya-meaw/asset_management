@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 interface AddAssetModalProps {
   open: boolean;
   onClose: () => void;
-  assetType: "car";
+  assetType: "car" | "property" | "laptop";
   onAdd: (data: any) => void;
 }
 

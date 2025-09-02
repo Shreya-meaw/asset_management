@@ -1,5 +1,7 @@
-
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { fetchLaptops, addLaptop, addCar, addProperty } from "@/services/assetsService";
+import { Loader2 } from "lucide-react";
+import { AddAssetModal } from "@/components/AddAssetModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -20,78 +22,49 @@ import {
 } from "lucide-react";
 
 export function LaptopsDashboard() {
-  const laptopData = [
-    {
-      id: "LAP-001",
-      model: 'MacBook Pro 16" M3',
-      brand: "Apple",
-      status: "assigned",
-      assignee: "John Smith",
-      department: "Engineering",
-      storageUsed: 75,
-      batteryHealth: 92,
-      lastSeen: "2024-01-25 14:30",
-      warrantyExpiry: "2026-03-15",
-    },
-    {
-      id: "LAP-002",
-      model: "ThinkPad X1 Carbon",
-      brand: "Lenovo",
-      status: "available",
-      assignee: "Unassigned",
-      department: "IT Pool",
-      storageUsed: 15,
-      batteryHealth: 88,
-      lastSeen: "2024-01-24 16:45",
-      warrantyExpiry: "2025-08-20",
-    },
-    {
-      id: "LAP-003",
-      model: "Surface Laptop 5",
-      brand: "Microsoft",
-      status: "maintenance",
-      assignee: "Sarah Johnson",
-      department: "Marketing",
-      storageUsed: 65,
-      batteryHealth: 45,
-      lastSeen: "2024-01-20 09:15",
-      warrantyExpiry: "2025-12-10",
-    },
-  ];
-
+  const [laptopData, setLaptopData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addSuccess, setAddSuccess] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const normalize = (str: string) => str.toLowerCase();
+  useEffect(() => {
+    async function getLaptops() {
+      setLoading(true);
+      try {
+        const data = await fetchLaptops();
+        setLaptopData(data);
+      } catch (err) {
+        console.error("Error fetching laptops:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getLaptops();
+  }, []);
+
+  const handleAddLaptop = async (data: any) => {
+    try {
+      const newLaptop = await addLaptop(data);
+      setLaptopData((prev) => [...prev, newLaptop]);
+      setAddSuccess(true);
+      setTimeout(() => setAddSuccess(false), 3000);
+    } catch (err) {
+      console.error("Error adding laptop:", err);
+    }
+  };
+
+  const normalize = (str: any) => (typeof str === "string" ? str.toLowerCase() : "");
 
   const filteredLaptops = useMemo(() => {
     if (!searchQuery.trim()) return laptopData;
-
     const q = normalize(searchQuery);
-
-    const idPrefixMatches = laptopData.filter((laptop) =>
-      normalize(laptop.id).startsWith(q)
-    );
-
-    const idContainsMatches = laptopData.filter(
+    return laptopData.filter(
       (laptop) =>
-        normalize(laptop.id).includes(q) && !normalize(laptop.id).startsWith(q)
-    );
-
-    const otherMatches = laptopData.filter(
-      (laptop) =>
-        !normalize(laptop.id).includes(q) &&
-        (normalize(laptop.model).includes(q) ||
-          normalize(laptop.brand).includes(q) ||
-          normalize(laptop.assignee).includes(q) ||
-          normalize(laptop.department).includes(q) ||
-          normalize(laptop.status).includes(q))
-    );
-
-    const combined = [...idPrefixMatches, ...idContainsMatches, ...otherMatches];
-
-    return combined.filter(
-      (laptop, index, self) =>
-        self.findIndex((l) => l.id === laptop.id) === index
+        normalize(laptop.id).includes(q) ||
+        normalize(laptop.name).includes(q) ||
+        normalize(laptop.modelNo).includes(q) ||
+        normalize(laptop.location).includes(q)
     );
   }, [searchQuery, laptopData]);
 
@@ -135,6 +108,11 @@ export function LaptopsDashboard() {
 
   return (
     <div className="space-y-6 px-2 sm:px-4 lg:px-6 py-2 sm:py-4 lg:py-6">
+      {addSuccess && (
+        <div className="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-50">
+          Laptop added successfully!
+        </div>
+      )}
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="card-glow">
@@ -205,7 +183,11 @@ export function LaptopsDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {filteredLaptops.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="animate-spin w-10 h-10 text-neon-cyan" />
+              </div>
+            ) : filteredLaptops.length > 0 ? (
               filteredLaptops.map((laptop, index) => (
                 <div
                   key={laptop.id}
@@ -222,9 +204,9 @@ export function LaptopsDashboard() {
                       {getBrandIcon(laptop.brand)}
                     </div>
                     <div className="min-w-0">
-                      <p className="font-heading font-semibold truncate">{laptop.model}</p>
+                      <p className="font-heading font-semibold truncate">{laptop.modelNo}</p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {laptop.id} • {laptop.brand}
+                        {laptop.id} • {laptop.name}
                       </p>
                     </div>
                   </div>
@@ -355,7 +337,10 @@ export function LaptopsDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        <Card className="card-glow cursor-pointer hover:scale-105 transition-transform">
+        <Card
+          className="card-glow cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => setShowAddModal(true)}
+        >
           <CardContent className="p-4 text-center">
             <Laptop className="w-8 h-8 text-neon-cyan mx-auto mb-2" />
             <p className="font-heading font-semibold">Add Device</p>
@@ -379,6 +364,13 @@ export function LaptopsDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <AddAssetModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        assetType="laptop"
+        onAdd={handleAddLaptop}
+      />
     </div>
   );
 }

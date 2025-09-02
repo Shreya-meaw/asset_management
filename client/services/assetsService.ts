@@ -39,3 +39,22 @@ export async function fetchProperties() {
   if (!response.ok) throw new Error("Failed to fetch properties");
   return response.json();
 }
+
+export async function fetchLaptops() {
+  const response = await fetch(`${BASE_URL}/assets/by-type/3`);
+  if (!response.ok) throw new Error("Failed to fetch laptops");
+  return response.json();
+}
+
+export async function addLaptop(laptopData: any) {debugger
+  laptopData.assetTypeId = 3;
+  const response = await fetch(`${BASE_URL}/assets`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(laptopData),
+  });
+  if (!response.ok) throw new Error("Failed to add laptop");
+  return response.json();
+}
