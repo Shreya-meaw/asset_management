@@ -43,6 +43,12 @@ export function Navbar() {
     setShowGetStartedForm(false);
   };
 
+  const handleLogoutClick = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("isloggedin");
+    navigate("/");
+  };
+
   const handleGetStartedClick = () => {
     setShowGetStartedForm(true);
     setShowLoginForm(false);
@@ -65,7 +71,6 @@ export function Navbar() {
       setIsAuthenticated(true);
       localStorage.setItem("isloggedin", "true");
       closeForms();
-      navigate("/cars");
     } else {
       setLoginError("Invalid email or password.");
     }
@@ -147,19 +152,23 @@ export function Navbar() {
               </Button>
 
               {/* CTA Buttons */}
-                  <Button
-                    variant="outline"
-                    className="text-foreground border-border hover:bg-accent hover:text-accent-foreground font-body font-medium transition-all duration-300"
-                    onClick={handleLoginClick}
-                  >
-                    Login
-                  </Button>
-                  <Button
+
+              <Button
+                variant="outline"
+                className="text-foreground border-border hover:bg-accent hover:text-accent-foreground font-body font-medium transition-all duration-300"
+                onClick={isAuthenticated ? handleLogoutClick : handleLoginClick}
+              >
+                {isAuthenticated ? "Logout" : "Login"}
+              </Button>
+
+
+
+              {/* <Button
                     className="btn-neon text-neon-cyan border-neon-cyan font-body font-semibold"
                     onClick={handleGetStartedClick}
                   >
                     Get Started
-                  </Button>          
+                  </Button>           */}
             </div>
 
             {/* Mobile menu button */}
@@ -227,12 +236,12 @@ export function Navbar() {
                   >
                     Login
                   </Button>
-                  <Button
+                  {/* <Button
                     className="w-full btn-neon text-neon-cyan border-neon-cyan font-semibold"
                     onClick={handleGetStartedClick}
                   >
                     Get Started
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </div>
@@ -278,6 +287,7 @@ export function Navbar() {
               {loginError && (
                 <div className="text-red-500 mb-2">{loginError}</div>
               )}
+
               <Button
                 type="submit"
                 className="w-full btn-neon text-neon-cyan border-neon-cyan font-semibold"

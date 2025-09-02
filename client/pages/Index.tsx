@@ -262,13 +262,13 @@ export default function Index() {
                 instant access to all features.
               </p>
 
-              <Button
+              {/* <Button
                 className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-xl px-12 py-6"
                 onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
               >
                 Try Live Demo
                 <ArrowRight className="w-6 h-6 ml-3" />
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
@@ -545,7 +545,7 @@ export default function Index() {
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-2xl px-16 py-8 font-heading font-semibold"
           >
-            Start Free Trial
+            Start Managing your Assets
             <ArrowRight className="w-8 h-8 ml-4" />
           </Button>
         </div>

@@ -134,7 +134,7 @@ export function LaptopsDashboard() {
   };
 
   return (
-    <div className="space-y-6 px-2 sm:px-4 lg:px-6">
+    <div className="space-y-6 px-2 sm:px-4 lg:px-6 py-2 sm:py-4 lg:py-6">
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="card-glow">
