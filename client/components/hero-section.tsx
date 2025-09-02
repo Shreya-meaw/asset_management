@@ -119,10 +119,10 @@ export function HeroSection({ onLoginClick }: HeroSectionProps) {
                 {/* Show login button only if not logged in */}
                 {!isLoggedIn && (
                   <Button
-                    className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-lg px-10 py-6 w-full sm:w-auto group"
+                    className="btn-neon text-neon-cyan border-neon-cyan hover:bg-neon-cyan/10 text-lg px-10 py-6 w-auto sm:w-auto group"
                     onClick={onLoginClick}
                   >
-                    Please login to manage your assets
+                    Login to manage your assets
                     <ChevronRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 )}

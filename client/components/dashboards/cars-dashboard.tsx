@@ -13,43 +13,37 @@ import {
   DollarSign,
   Search,
 } from "lucide-react";
+import { AddAssetModal } from "../AddAssetModal";
 
 export function CarsDashboard() {
   const carData = [
     {
       id: "CAR-001",
-      model: "Toyota Camry 2023",
+      name: "Toyota Camry 2023",
       status: "active",
       location: "Downtown Office",
-      fuelLevel: 85,
-      lastService: "2024-01-15",
-      mileage: "15,234 km",
-      driver: "John Smith",
     },
     {
       id: "CAR-002",
-      model: "Honda Civic 2022",
+      name: "Honda Civic 2022",
       status: "maintenance",
       location: "Service Center",
-      fuelLevel: 30,
-      lastService: "2024-01-20",
-      mileage: "22,456 km",
-      driver: "Unassigned",
     },
     {
       id: "CAR-003",
-      model: "BMW X5 2023",
+      name: "BMW X5 2023",
       status: "active",
-      location: "Airport",
-      fuelLevel: 92,
-      lastService: "2024-01-10",
-      mileage: "8,123 km",
-      driver: "Sarah Johnson",
+      location: "Airport"
     },
   ];
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
 
+  const handleAddCar = (data: any) => {
+    // Add car logic here
+    console.log("New car:", data);
+  };
   const normalize = (str: string) => str.toLowerCase();
 
   const filteredCars = React.useMemo(() => {
@@ -66,8 +60,7 @@ export function CarsDashboard() {
     const otherMatches = carData.filter(
       (car) =>
         !normalize(car.id).includes(q) &&
-        (normalize(car.model).includes(q) ||
-          normalize(car.driver).includes(q) ||
+        (normalize(car.name).includes(q) ||
           normalize(car.status).includes(q) ||
           normalize(car.location).includes(q))
     );
@@ -165,7 +158,7 @@ export function CarsDashboard() {
             <div className="relative w-full md:max-w-xs">
               <input
                 type="text"
-                placeholder="Search vehicles by ID, model, driver..."
+                placeholder="Search vehicles..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 rounded-lg bg-card border border-border text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan transition"
@@ -193,9 +186,9 @@ export function CarsDashboard() {
                       <Car className="w-6 h-6 text-neon-cyan" />
                     </div>
                     <div className="min-w-0">
-                      <p className="font-heading font-semibold truncate">{car.model}</p>
+                      <p className="font-heading font-semibold truncate">{car.name}</p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {car.id} • {car.mileage}
+                        {car.id}
                       </p>
                     </div>
                   </div>
@@ -211,7 +204,7 @@ export function CarsDashboard() {
                         {getStatusIcon(car.status)}
                         <span className="text-sm font-medium capitalize">{car.status}</span>
                       </div>
-                      <p className="text-xs text-muted-foreground sm:mt-1">{car.driver}</p>
+                      {/* <p className="text-xs text-muted-foreground sm:mt-1">{car.driver}</p> */}
                     </div>
 
                     <div className="flex items-center justify-between sm:flex-col sm:items-center sm:min-w-[100px] mt-2 sm:mt-0">
@@ -221,10 +214,10 @@ export function CarsDashboard() {
 
                     <div className="flex items-center justify-between sm:flex-col sm:items-center sm:min-w-[80px] mt-2 sm:mt-0">
                       <Fuel className="w-4 h-4 text-muted-foreground sm:mb-1" />
-                      <div className="flex-1 min-w-0">
+                      {/* <div className="flex-1 min-w-0">
                         <Progress value={car.fuelLevel} className="h-2" />
                         <p className="text-xs text-muted-foreground mt-1">{car.fuelLevel}%</p>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -239,7 +232,7 @@ export function CarsDashboard() {
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <Card className="card-hover-enhance cursor-pointer group">
-          <CardContent className="p-6 text-center relative overflow-hidden">
+          <CardContent onClick={() => setShowAddModal(true)} className="p-6 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-12 h-12 bg-neon-cyan/10 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
             <div className="relative z-10">
               <div className="w-16 h-16 mx-auto bg-neon-cyan/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
@@ -253,6 +246,13 @@ export function CarsDashboard() {
             </div>
           </CardContent>
         </Card>
+
+        <AddAssetModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        assetType="car"
+        onAdd={handleAddCar}
+      />
 
         <Card className="card-hover-enhance cursor-pointer group">
           <CardContent className="p-6 text-center relative overflow-hidden">
