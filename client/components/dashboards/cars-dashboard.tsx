@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -14,31 +13,28 @@ import {
   Search,
 } from "lucide-react";
 import { AddAssetModal } from "../AddAssetModal";
+import { fetchCars } from "@/services/assetsService";
 
 export function CarsDashboard() {
-  const carData = [
-    {
-      id: "CAR-001",
-      name: "Toyota Camry 2023",
-      status: "active",
-      location: "Downtown Office",
-    },
-    {
-      id: "CAR-002",
-      name: "Honda Civic 2022",
-      status: "maintenance",
-      location: "Service Center",
-    },
-    {
-      id: "CAR-003",
-      name: "BMW X5 2023",
-      status: "active",
-      location: "Airport"
-    },
-  ];
-
+  const [carData, setCarData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+
+  useEffect(() => {
+    async function getCars() {
+      setLoading(true);
+      try {
+        const data = await fetchCars();
+        setCarData(data);
+      } catch (err) {
+        console.error("Error fetching cars:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getCars();
+  }, []);
 
   const handleAddCar = (data: any) => {
     // Add car logic here
@@ -71,29 +67,42 @@ export function CarsDashboard() {
     );
   }, [searchQuery, carData]);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: number) => {debugger;
     switch (status) {
-      case "active":
+      case 2:
         return "text-neon-green";
-      case "maintenance":
+      case 1:
         return "text-neon-orange";
-      case "inactive":
+      case 0:
         return "text-muted-foreground";
       default:
         return "text-muted-foreground";
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: number) => {
     switch (status) {
-      case "active":
+      case 2:
         return <CheckCircle className="w-4 h-4" />;
-      case "maintenance":
+      case 1:
         return <AlertTriangle className="w-4 h-4" />;
-      case "inactive":
+      case 0:
         return <Clock className="w-4 h-4" />;
       default:
         return <Clock className="w-4 h-4" />;
+    }
+  };
+
+  const getStatusName = (status: number) => {
+    switch (status) {
+      case 2:
+        return "Active";
+      case 1:
+        return  "Maintenance";
+      case 0:
+        return  "Inactive";
+      default:
+        return "Inactive";
     }
   };
 
@@ -188,7 +197,7 @@ export function CarsDashboard() {
                     <div className="min-w-0">
                       <p className="font-heading font-semibold truncate">{car.name}</p>
                       <p className="text-sm text-muted-foreground truncate">
-                        {car.id}
+                        {car.modelNo}
                       </p>
                     </div>
                   </div>
@@ -202,7 +211,7 @@ export function CarsDashboard() {
                         )}`}
                       >
                         {getStatusIcon(car.status)}
-                        <span className="text-sm font-medium capitalize">{car.status}</span>
+                        <span className="text-sm font-medium capitalize">{getStatusName(car.status)}</span>
                       </div>
                       {/* <p className="text-xs text-muted-foreground sm:mt-1">{car.driver}</p> */}
                     </div>
