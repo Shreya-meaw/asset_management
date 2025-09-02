@@ -11,6 +11,7 @@ import {
   Clock,
   DollarSign,
   Search,
+  Loader2,
 } from "lucide-react";
 import { AddAssetModal } from "../AddAssetModal";
 import { fetchCars, addCar } from "@/services/assetsService";
@@ -191,7 +192,11 @@ export function CarsDashboard() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {filteredCars.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="animate-spin w-10 h-10 text-neon-cyan" />
+              </div>
+            ) : filteredCars.length > 0 ? (
               filteredCars.map((car, index) => (
                 <div
                   key={car.id}
