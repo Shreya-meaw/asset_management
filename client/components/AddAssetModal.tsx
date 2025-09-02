@@ -15,7 +15,7 @@ export function AddAssetModal({ open, onClose, assetType, onAdd }: AddAssetModal
     location: "",
     description: "",
     status: 0,
-    assetTypeId: 1,
+    assetTypeId: 0,
   });
 
   if (!open) return null;

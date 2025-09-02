@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import { fetchProperties, addCar, addProperty } from "@/services/assetsService"; // reuse addCar if payload is same
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -15,47 +16,43 @@ import {
   FileText,
   Search,
 } from "lucide-react";
+import { Loader2 } from "lucide-react";
+import { AddAssetModal } from "../AddAssetModal";
 
 export function PropertiesDashboard() {
-  const propertyData = [
-    {
-      id: "PROP-001",
-      name: "Downtown Office Complex",
-      type: "Commercial",
-      location: "New York, NY",
-      status: "occupied",
-      occupancy: 95,
-      monthlyRevenue: "$45,000",
-      tenants: 12,
-      nextInspection: "2024-02-15",
-    },
-    {
-      id: "PROP-002",
-      name: "Riverside Apartments",
-      type: "Residential",
-      location: "San Francisco, CA",
-      status: "available",
-      occupancy: 78,
-      monthlyRevenue: "$32,000",
-      tenants: 24,
-      nextInspection: "2024-02-20",
-    },
-    {
-      id: "PROP-003",
-      name: "Tech Hub Warehouse",
-      type: "Industrial",
-      location: "Austin, TX",
-      status: "maintenance",
-      occupancy: 100,
-      monthlyRevenue: "$28,000",
-      tenants: 3,
-      nextInspection: "2024-02-10",
-    },
-  ];
-
+  const [propertyData, setPropertyData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [addSuccess, setAddSuccess] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const normalize = (str: string) => str.toLowerCase();
+  useEffect(() => {
+    async function getProperties() {
+      setLoading(true);
+      try {
+        const data = await fetchProperties();
+        setPropertyData(data);
+      } catch (err) {
+        console.error("Error fetching properties:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    getProperties();
+  }, []);
+
+  const handleAddProperty = async (data: any) => {
+    try {
+      const newProperty = await addProperty(data);
+      setPropertyData((prev) => [...prev, newProperty]);
+      setAddSuccess(true);
+      setTimeout(() => setAddSuccess(false), 3000);
+    } catch (err) {
+      console.error("Error adding property:", err);
+    }
+  };
+
+  const normalize = (str: any) => (typeof str === "string" ? str.toLowerCase() : "");
 
   const filteredProperties = useMemo(() => {
     if (!searchQuery.trim()) return propertyData;
@@ -127,6 +124,11 @@ export function PropertiesDashboard() {
 
   return (
     <div className="space-y-6 px-2 sm:px-4 lg:px-6 py-2 sm:py-4 lg:py-6">
+      {addSuccess && (
+        <div className="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-50">
+          Property added successfully!
+        </div>
+      )}
       {/* Overview Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <Card className="card-glow">
@@ -175,7 +177,7 @@ export function PropertiesDashboard() {
             <div className="relative w-full md:max-w-xs">
               <input
                 type="text"
-                placeholder="Search by ID, name, type, location, status..."
+                placeholder="Search..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 rounded-lg bg-card border border-border text-muted-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-neon-cyan focus:border-neon-cyan transition"
@@ -187,7 +189,11 @@ export function PropertiesDashboard() {
 
         <CardContent>
           <div className="space-y-3">
-            {filteredProperties.length > 0 ? (
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="animate-spin w-10 h-10 text-neon-cyan" />
+              </div>
+            ) : filteredProperties.length > 0 ? (
               filteredProperties.map((property, index) => (
                 <div
                   key={property.id}
@@ -277,7 +283,10 @@ export function PropertiesDashboard() {
 
       {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-        <Card className="card-glow cursor-pointer hover:scale-105 transition-transform">
+        <Card
+          className="card-glow cursor-pointer hover:scale-105 transition-transform"
+          onClick={() => setShowAddModal(true)}
+        >
           <CardContent className="p-4 text-center">
             <Home className="w-8 h-8 text-neon-cyan mx-auto mb-2" />
             <p className="font-heading font-semibold">Add Property</p>
@@ -299,6 +308,13 @@ export function PropertiesDashboard() {
           </CardContent>
         </Card>
       </div>
+
+      <AddAssetModal
+        open={showAddModal}
+        onClose={() => setShowAddModal(false)}
+        assetType="property"
+        onAdd={handleAddProperty}
+      />
     </div>
   );
 }

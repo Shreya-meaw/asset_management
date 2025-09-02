@@ -9,6 +9,7 @@ export async function fetchCars() {
 }
 
 export async function addCar(carData: any) {
+  carData.assetTypeId = 1;
   const response = await fetch(`${BASE_URL}/assets`, {
     method: "POST",
     headers: {
@@ -17,5 +18,24 @@ export async function addCar(carData: any) {
     body: JSON.stringify(carData),
   });
   if (!response.ok) throw new Error("Failed to add car");
+  return response.json();
+}
+
+export async function addProperty(property: any) {
+  property.assetTypeId = 2;
+  const response = await fetch(`${BASE_URL}/assets`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(property),
+  });
+  if (!response.ok) throw new Error("Failed to add car");
+  return response.json();
+}
+
+export async function fetchProperties() {
+  const response = await fetch(`${BASE_URL}/assets/by-type/2`);
+  if (!response.ok) throw new Error("Failed to fetch properties");
   return response.json();
 }
