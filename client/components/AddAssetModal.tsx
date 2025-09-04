@@ -2,13 +2,14 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 
 interface AddAssetModalProps {
+  header: string;
   open: boolean;
   onClose: () => void;
   assetType: "car" | "property" | "laptop";
   onAdd: (data: any) => void;
 }
 
-export function AddAssetModal({ open, onClose, assetType, onAdd }: AddAssetModalProps) {
+export function AddAssetModal({ open, onClose, assetType, onAdd, header }: AddAssetModalProps) {
   const [form, setForm] = useState({
     name: "",
     modelNo: "",
@@ -24,7 +25,7 @@ export function AddAssetModal({ open, onClose, assetType, onAdd }: AddAssetModal
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-background rounded-xl p-8 w-full max-w-md shadow-lg relative">
         <h2 className="text-2xl font-heading font-bold mb-6 text-center">
-          Add New Vehicle
+          {header}
         </h2>
         <form
           onSubmit={e => {

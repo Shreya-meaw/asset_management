@@ -279,6 +279,7 @@ export function CarsDashboard() {
           onClose={() => setShowAddModal(false)}
           assetType="car"
           onAdd={handleAddCar}
+          header="Add New Vehicle"
         />
 
         <Card className="card-hover-enhance cursor-pointer group">
